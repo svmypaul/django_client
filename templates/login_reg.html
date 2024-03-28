@@ -672,7 +672,7 @@
 						</ul>
 						<div class="tab-content">
 							<div id="customer1" class="tab-pane fade in active">
-								<form action="{% url 'recuiter-login' %}" class="form_div_outer" method="post">
+								<form action="{% url 'recruiter-login' %}" class="form_div_outer" method="post">
 									{% csrf_token %}
 									<div class="form-group">
 										<label for="username">Username:</label>
@@ -711,7 +711,7 @@
 								</div>
 							</div>
 							<div id="agency1" class="tab-pane fade">
-								<form action="{% url 'recuiter-reg' %}" class="form_div_outer" method="post">
+								<form action="{% url 'recruiter-reg' %}" class="form_div_outer" method="post">
 									{% csrf_token %}
 									<div class="form-group">
 										<label for="companyid">Company Id:</label>

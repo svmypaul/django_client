@@ -16,7 +16,7 @@ class CompanyLogin(models.Model):
 
 
 
-class recuiter_login(models.Model):
+class recruiter_login(models.Model):
 
     uniqueid = models.CharField(max_length = 20)
     company_name = models.CharField(max_length = 30)
@@ -25,3 +25,20 @@ class recuiter_login(models.Model):
     mail = models.CharField(max_length = 30)
     psw = models.TextField()
     dob = models.DateField()
+
+
+class gmail_cv(models.Model):
+
+    time = models.DateField()
+    mail = models.CharField(max_length = 30)
+    name = models.CharField(max_length = 30)
+    heading = models.TextField()
+    body = models.TextField()
+    skill = models.TextField()
+    contact_no = models.CharField(max_length = 20)
+    contact_mail = models.CharField(max_length = 20)
+    address = models.TextField()
+    company_name = models.CharField(max_length = 30)
+    recruiter_name = models.CharField(max_length = 30)
+    filename = models.CharField(max_length = 30)
+    uniqueid = models.CharField(max_length = 20)

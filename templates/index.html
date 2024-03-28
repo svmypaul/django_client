@@ -66,7 +66,7 @@
 										<li> <a href="#">Contact Us</a> </li>
 										<ul>
 											{% if username %}
-											<li><a>{{username}}</a></li>
+											<li><a href="{% url 'recruiter-dashboard' %}">{{username}}</a></li>
 											<li class="log_outer">
 												<a href="{% url 'logout' %}" class="log_reg">
 													<i class="fa fa-user" aria-hidden="true"></i> Logout
