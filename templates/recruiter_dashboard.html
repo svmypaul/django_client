@@ -71,7 +71,7 @@
 								<div class="droopmenu-nav">
 									<ul class="droopmenu">
 										<li> <a href="{% url 'home' %}" class="active">Home</a> </li>
-										<li> <a href="#">Post a Job</a> </li>
+										<li> <a href="{% url 'jobpost' %}">Post a Job</a> </li>
 										<li> <a href="#">Find Resume</a></li>
 										<li> <a href="#">Contact Us</a> </li>
 										<li> <a href="#">Welcome {{username}}</a> </li>
@@ -706,7 +706,7 @@
 			<div class="col-md-12">
 
 
-				{% for email, name, time, filename, skill  in data %}
+				{% for email, name, time, filename, skill, id  in data %}
 				<div class="candidate_box pb-20">
 					<div class="row">
 						<div class="col-md-8">
@@ -786,7 +786,15 @@
 						<div class="clearfix"></div>
 					</div>
 					<div class="clearfix"></div>
-
+					<button type="button" class="btn btn-danger" onclick="redirectToURL('{{ id }}')">Remove </button>
+					<script>
+						function redirectToURL(id) {
+							// Replace 'your_url_here' with the actual URL you want to redirect to
+							// Include the id parameter in the URL
+							window.location.href = "{% url 'remove_can' %}?id=" + id;
+						}
+					</script>
+					
 				</div>
 				{% endfor %}
 				
