@@ -86,11 +86,20 @@ def company_login(request):
         if user.exists():
 
             passwordentered = user.values('password')[0]['password']
+            company_name = user.values('company_name')[0]['company_name']
+            uniqueid = user.values('unique_id')[0]['unique_id']
+            mailid = user.values('email')[0]['email']
             
             if check_password(psw, passwordentered):
 
                 request.session['username'] = username
-                return render(request, 'index.html',{'username': username})
+                request.session['company_name'] = company_name
+                request.session['uniqueid'] = uniqueid
+                request.session['mailid'] = mailid
+
+                request.session['logintype'] = "company"
+                # return render(request, 'index.html',{'username': username})
+                return redirect(reverse('dashboard'))
             else:
                return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
         else:
@@ -188,9 +197,10 @@ def recruiter_Login(request):
                 request.session['company_name'] = company_name
                 request.session['uniqueid'] = uniqueid
                 request.session['mailid'] = mailid
+                request.session['logintype'] = "recruiter"
                 # return redirect(f'http://localhost:8080/?username={username}')
                 # return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid})
-                return redirect(reverse('recruiter-dashboard'))
+                return redirect(reverse('dashboard'))
             else:
                return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
         else:
@@ -216,6 +226,19 @@ def logout(request):
     
     return render(request, 'index.html')
 
+def dashboard(request):
+
+    login_type = request.session['logintype']
+
+    if login_type == "company":
+        return redirect(reverse('company-dashboard'))
+    
+    elif login_type == "recruiter":
+        return redirect(reverse('recruiter-dashboard'))
+    
+    else:
+        return redirect(reverse('home'))
+
 def recruiter_dashboard(request):
 
     if 'username' in request.session:
@@ -237,6 +260,30 @@ def recruiter_dashboard(request):
         return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid,"data": data})
     else:
         return render(request, 'index.html')
+    
+def company_dashboard(request):
+
+    if 'username' in request.session:
+        username = request.session['username']
+        company_name = request.session['company_name']
+        uniqueid =  request.session['uniqueid']
+        mailid = request.session['mailid']
+
+        rec_user_data = recruiter_login.objects.filter(uniqueid=uniqueid)
+
+        if rec_user_data.exists():
+
+            name = rec_user_data.values_list('name', flat=True)
+            mailid = rec_user_data.values_list('mail', flat=True)
+            print(name)
+            total_rec = len(name)
+            rec_users = zip(name,mailid)
+            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':mailid,'total_rec': total_rec,'data': rec_users})
+        
+        else:
+            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':mailid})
+    else:
+        return redirect(reverse('home'))
 
 def jobpost(request):
 
