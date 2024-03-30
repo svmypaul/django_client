@@ -14,8 +14,7 @@ class CompanyLogin(models.Model):
     password = models.TextField()  # Assuming hashed password will be stored
     unique_id = models.CharField(max_length=100)
     active = models.CharField(max_length=20)
-    date = models.DateField()
-
+    reg_date = models.DateField()
 
 
 class recruiter_login(models.Model):

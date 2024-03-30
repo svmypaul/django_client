@@ -12,11 +12,11 @@
 <body>
   <div class="container text-center">
     <h1>Job Post Dashboard</h1>
-    <button type="button" class="btn btn-primary" onclick="redirectToURL()"> Post a Job + </button>
+    <button type="button" class="btn btn-primary" onclick="redirectToURLli()"> Post a Job + </button>
   </div>
 
   <script>
-    function redirectToURL() {
+    function redirectToURLli() {
       // Replace 'your_url_here' with the actual URL you want to redirect to
       window.location.href = "{% url 'newjobpost' %}";
     }

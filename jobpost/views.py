@@ -39,16 +39,16 @@ def company_register(request):
         psw = request.POST.get('pwd')
         cnf_pwd = request.POST.get('cnf-psw')
         uniqueid = generate_random_id()
-
+   
         try:
             existing_username = CompanyLogin.objects.values_list('username', flat=True)
-            existing_mail = CompanyLogin.objects.values_list('mail', flat=True)
-            existing_username = []
-            existing_mail = []
+            existing_mail = CompanyLogin.objects.values_list('email', flat=True)
         except:
             existing_username = []
             existing_mail = []
             pass
+
+        print(existing_username)
         if psw != cnf_pwd:
             
             return render(request, 'login_reg.html',{'messages': "The input for the password and confirm password fields must match exactly"})
@@ -57,16 +57,20 @@ def company_register(request):
 
             return render(request, 'login_reg.html',{'messages': "This  username or email is already exist please different username or email"})
         else:
+            # Parse the date string into a datetime object
+            date_obj = datetime.now()
 
+            # Format the datetime object into MySQL date format
+            date = date_obj.strftime("%Y-%m-%d")
             hash_psw = make_password(psw)
             v = f"{company_name} {company_add} {username} {mail} {hash_psw} {cnf_pwd} "
             print(v)
             b1 = uniqueids(uniqueid = uniqueid)
-            b2 = CompanyLogin(company_name = company_name, company_address = company_add,username=username,email=mail,password=hash_psw,unique_id=uniqueid)
+            b2 = CompanyLogin(company_name = company_name, company_address = company_add,username=username,email=mail,password=hash_psw,unique_id=uniqueid,reg_date = date)
 
             b1.save()
             b2.save()
-            return render(request, 'test.html',{'result': v})
+            return render(request, 'login_reg.html',{'messages': "You have successfully registered your company"})
         
      elif 'username' in request.session:
         username = request.session['username']
@@ -167,13 +171,13 @@ def recruiter_register(request):
             company_name = first_company.company_name
 
             hash_psw = make_password(psw)
-            v = f"{company_id} {name} {username} {mail} {hash_psw} {cnf_pwd} {company_name}"
-            print(v)
+            # v = f"{company_id} {name} {username} {mail} {hash_psw} {cnf_pwd} {company_name}"
+            # print(v)
             
             b2 = recruiter_login(company_name = company_name,name = name, username=username,mail=mail,psw=hash_psw,uniqueid=company_id,dob = dob)
 
             b2.save()
-            return render(request, 'test.html',{'result': v})
+            return render(request, 'login_reg.html',{'messages': f"You have successfully joined {company_name}"})
         
      elif 'username' in request.session:
         username = request.session['username']
@@ -294,7 +298,7 @@ def company_dashboard(request):
             return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':com_mailid,'total_rec': total_rec,'data': rec_users})
         
         else:
-            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':mailid})
+            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':com_mailid})
     else:
         return redirect(reverse('home'))
 
