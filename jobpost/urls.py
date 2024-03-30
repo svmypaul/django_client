@@ -22,6 +22,7 @@ urlpatterns = [
     path('mailtemplate/', views.mailtemplate, name="mailtemplate"),
     path('sendmail/', views.sendmail, name="sendmail"),
     path('removecan/', views.remove_can, name="remove_can"),
+    path('lockprofile/', views.lockprofile, name="lockprofile"),
 
     
 ]

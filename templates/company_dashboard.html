@@ -1032,7 +1032,7 @@
 					<div class="clearfix"></div>
 
 				</div>
-				{% for name, email in data %}
+				{% for name, email, username in data %}
 				<div class="candidate_box">
 					<div class="row">
 						<div class="col-md-8">
@@ -1088,9 +1088,26 @@
 							<ul class="list-inline">
 								<li>
 									<div class="btn-group btn-toggle">
-										<button class="btn btn-xs btn-default">Active</button>
-										<button class="btn btn-xs btn-success active">Deactive</button>
+										<button class="btn btn-xs btn-default" onclick="redirectToURL('active', '{{ username }}')">Active</button>
+										<button class="btn btn-xs btn-success active" onclick="redirectToURL('deactive', '{{ username }}')">Deactive</button>
 									</div>
+									
+									<script>
+									function redirectToURL(status, username) {
+										// Specify the URL you want to redirect to
+										var baseURL = "{% url 'lockprofile' %}"; // Change this URL to your desired destination
+									
+										// Encode the username parameter
+										var encodedUsername = encodeURIComponent(username);
+									
+										// Construct the URL with query parameters
+										var url = baseURL + '?status=' + status + '&username=' + encodedUsername;
+									
+										// Redirect to the constructed URL
+										window.location.href = url;
+									}
+									</script>
+									
 								</li>
 							</ul>
 

@@ -89,19 +89,25 @@ def company_login(request):
             company_name = user.values('company_name')[0]['company_name']
             uniqueid = user.values('unique_id')[0]['unique_id']
             mailid = user.values('email')[0]['email']
-            
-            if check_password(psw, passwordentered):
+            isactive = user.values('active')[0]['active']
+            print(mailid)
 
-                request.session['username'] = username
-                request.session['company_name'] = company_name
-                request.session['uniqueid'] = uniqueid
-                request.session['mailid'] = mailid
+            if isactive == 'true':
 
-                request.session['logintype'] = "company"
-                # return render(request, 'index.html',{'username': username})
-                return redirect(reverse('dashboard'))
+                if check_password(psw, passwordentered):
+
+                    request.session['username'] = username
+                    request.session['company_name'] = company_name
+                    request.session['uniqueid'] = uniqueid
+                    request.session['mailid'] = mailid
+
+                    request.session['logintype'] = "company"
+                    # return render(request, 'index.html',{'username': username})
+                    return redirect(reverse('dashboard'))
+                else:
+                    return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
             else:
-               return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
+                return render(request, 'login_reg.html',{'messages': "Profile Locked"}) 
         else:
             return render(request, 'login_reg.html',{'messages': "Wrong username"})
         
@@ -190,19 +196,23 @@ def recruiter_Login(request):
             company_name = user.values('company_name')[0]['company_name']
             uniqueid = user.values('uniqueid')[0]['uniqueid']
             mailid = user.values('mail')[0]['mail']
+            isactive = user.values('rstat')[0]['rstat']
             
-            if check_password(psw, passwordentered):
+            if isactive == "active":
+                if check_password(psw, passwordentered):
 
-                request.session['username'] = username
-                request.session['company_name'] = company_name
-                request.session['uniqueid'] = uniqueid
-                request.session['mailid'] = mailid
-                request.session['logintype'] = "recruiter"
-                # return redirect(f'http://localhost:8080/?username={username}')
-                # return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid})
-                return redirect(reverse('dashboard'))
+                    request.session['username'] = username
+                    request.session['company_name'] = company_name
+                    request.session['uniqueid'] = uniqueid
+                    request.session['mailid'] = mailid
+                    request.session['logintype'] = "recruiter"
+                    # return redirect(f'http://localhost:8080/?username={username}')
+                    # return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid})
+                    return redirect(reverse('dashboard'))
+                else:
+                    return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
             else:
-               return render(request, 'login_reg.html',{'messages': "Wrong Password"}) 
+                return render(request, 'login_reg.html',{'messages': "Profile Locked"})
         else:
             return render(request, 'login_reg.html',{'messages': "Wrong username"})
         
@@ -257,6 +267,8 @@ def recruiter_dashboard(request):
         id_json = user_data.values_list('id', flat=True)
 
         data = zip(mail_json, name_json, datetime_json, filename_json, skill_json , id_json)
+
+        
         return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid,"data": data})
     else:
         return render(request, 'index.html')
@@ -267,7 +279,7 @@ def company_dashboard(request):
         username = request.session['username']
         company_name = request.session['company_name']
         uniqueid =  request.session['uniqueid']
-        mailid = request.session['mailid']
+        com_mailid = request.session['mailid']
 
         rec_user_data = recruiter_login.objects.filter(uniqueid=uniqueid)
 
@@ -275,10 +287,11 @@ def company_dashboard(request):
 
             name = rec_user_data.values_list('name', flat=True)
             mailid = rec_user_data.values_list('mail', flat=True)
+            user_name = rec_user_data.values_list('username', flat=True)
             print(name)
             total_rec = len(name)
-            rec_users = zip(name,mailid)
-            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':mailid,'total_rec': total_rec,'data': rec_users})
+            rec_users = zip(name,mailid,user_name)
+            return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':com_mailid,'total_rec': total_rec,'data': rec_users})
         
         else:
             return render(request, 'company_dashboard.html',{'username': username,'company_name': company_name,'uniqueid': uniqueid,'mailid':mailid})
@@ -523,3 +536,25 @@ def remove_can(request):
         cv_to_delete.delete()
     return redirect(reverse('recruiter-dashboard'))
     
+
+def lockprofile(request):
+    if 'status' in request.GET:
+        status = request.GET['status']
+        username = request.GET['username']
+        uniqueid = request.session.get('uniqueid')
+        print(username, uniqueid)
+        # Using get() to retrieve a single object
+        try:
+            object_to_update = recruiter_login.objects.get(username=username, uniqueid=uniqueid)
+        except recruiter_login.DoesNotExist:
+            return HttpResponse("Profile not found")
+
+        # Modify the attributes of the object
+        object_to_update.rstat = status
+
+        # Save the object to persist the changes to the database
+        object_to_update.save()
+        if status == 'active':
+            return HttpResponse("Profile unlocked successfully")
+        else:
+            return HttpResponse("Profile locked successfully")

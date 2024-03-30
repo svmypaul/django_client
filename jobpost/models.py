@@ -9,23 +9,27 @@ class uniqueids(models.Model):
 class CompanyLogin(models.Model):
     company_name = models.CharField(max_length=100)
     company_address = models.TextField()
-    username = models.CharField(max_length=20)
+    username = models.TextField()
     email = models.EmailField(max_length=254)
     password = models.TextField()  # Assuming hashed password will be stored
     unique_id = models.CharField(max_length=100)
+    active = models.CharField(max_length=20)
+    date = models.DateField()
 
 
 
 class recruiter_login(models.Model):
 
-    uniqueid = models.CharField(max_length = 20)
-    company_name = models.CharField(max_length = 30)
-    name = models.CharField(max_length = 30)
-    username = models.CharField(max_length = 20)
+    uniqueid = models.CharField(max_length=20)
+    company_name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30)
+    username = models.TextField()
     mail = models.TextField()
     psw = models.TextField()
     dob = models.DateField()
-
+    rstat = models.CharField(max_length=30) 
+    no_email = models.CharField(max_length=30)
+    no_cv = models.CharField(max_length=30)
 
 class gmail_cv(models.Model):
 
