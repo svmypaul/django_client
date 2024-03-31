@@ -174,7 +174,7 @@ def recruiter_register(request):
             # v = f"{company_id} {name} {username} {mail} {hash_psw} {cnf_pwd} {company_name}"
             # print(v)
             
-            b2 = recruiter_login(company_name = company_name,name = name, username=username,mail=mail,psw=hash_psw,uniqueid=company_id,dob = dob)
+            b2 = recruiter_login(company_name = company_name,name = name, username=username,mail=mail,psw=hash_psw,uniqueid=company_id,dob = dob,no_cv = 0,no_email = 0)
 
             b2.save()
             return render(request, 'login_reg.html',{'messages': f"You have successfully joined {company_name}"})
@@ -272,8 +272,10 @@ def recruiter_dashboard(request):
 
         data = zip(mail_json, name_json, datetime_json, filename_json, skill_json , id_json)
 
+        re_data = recruiter_login.objects.get(username=username, uniqueid = uniqueid)
+        no_emails = re_data.no_email
         
-        return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid,"data": data})
+        return render(request, 'recruiter_dashboard.html',{'username': username,'companyname': company_name, 'uniqueid': uniqueid, 'mailid': mailid,"data": data, "no_cv": len(filename_json), "no_emails": no_emails})
     else:
         return render(request, 'index.html')
     
